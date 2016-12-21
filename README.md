@@ -1,0 +1,1 @@
+# sdl_core_346_wince
