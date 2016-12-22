@@ -243,7 +243,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 endif()
 
 install(
-  FILES log4cxx.properties audio.8bit.wav test.txt smartDeviceLink.ini
+  FILES log4cxx.properties audio.8bit.wav smartDeviceLink.ini
     hmi_capabilities.json sdl_preloaded_pt.json
     ${CMAKE_SOURCE_DIR}/mycert.pem ${CMAKE_SOURCE_DIR}/mykey.pem
   DESTINATION bin

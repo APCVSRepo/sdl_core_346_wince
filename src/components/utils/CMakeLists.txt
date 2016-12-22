@@ -136,11 +136,3 @@ target_link_libraries("Utils" ${LIBRARIES})
 if(BUILD_TESTS)
   add_subdirectory(test)
 endif()
-
-install(TARGETS "Utils"
-  DESTINATION bin
-  PERMISSIONS
-    OWNER_READ OWNER_WRITE
-    GROUP_READ
-    WORLD_READ
-)
