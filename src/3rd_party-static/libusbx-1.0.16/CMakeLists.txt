@@ -10,20 +10,7 @@ include_directories (
   ./
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Android")
-set (LIBUSB_SOURCES
-	./libusb/core.c
-	./libusb/descriptor.c
-	./libusb/hotplug.c
-	./libusb/io.c
-	./libusb/strerror.c
-	./libusb/sync.c
-  ./libusb/os/linux_netlink.c
-	./libusb/os/linux_usbfs.c
-	./libusb/os/poll_posix.c
-	./libusb/os/threads_posix.c
-)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (LIBUSB_SOURCES
 	./libusb/missing.c
 	./libusb/core.c
@@ -36,37 +23,6 @@ set (LIBUSB_SOURCES
 	./libusb/os/poll_windows.c
 	./libusb/os/threads_windows.c
 )
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-set (LIBUSB_SOURCES
-	./libusb/core.c
-	./libusb/descriptor.c
-	./libusb/hotplug.c
-	./libusb/io.c
-	./libusb/strerror.c
-	./libusb/sync.c
-	./libusb/os/windows_usb.c
-	./libusb/os/poll_windows.c
-	./libusb/os/threads_windows.c
-)
-else()
-set (LIBUSB_SOURCES
-	./libusb/core.c
-	./libusb/descriptor.c
-	./libusb/hotplug.c
-	./libusb/io.c
-	./libusb/strerror.c
-	./libusb/sync.c
-	./libusb/os/linux_udev.c
-	./libusb/os/linux_netlink.c
-	./libusb/os/linux_usbfs.c
-	./libusb/os/poll_posix.c
-	./libusb/os/threads_posix.c
-)
 endif()
 
 add_library("Libusb-1.0.16" ${LIBUSB_SOURCES})
-
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-target_link_libraries("Libusb-1.0.16" udev)
-endif()

@@ -57,16 +57,6 @@ include_directories (
   ${LOG4CXX_INCLUDE_DIRECTORY}
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include_directories(
-        ${COMPONENTS_DIR}/utils/include/utils/sqlite_wrapper/
-        ${CMAKE_SOURCE_DIR}/include/win32
-        ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include/arch/win32
-        ${CMAKE_SOURCE_DIR}/src/LibVrMsp/
-	    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    )
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     include_directories(
         ${COMPONENTS_DIR}/utils/include/utils/sqlite_wrapper/
@@ -74,18 +64,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 	    ${CMAKE_SOURCE_DIR}/src/LibVrMsp/
         ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
     )
-endif()
-  
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  include_directories(
-    ${COMPONENTS_DIR}/utils/include/utils/sqlite_wrapper/
-  )
-endif ()
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "QNX")
-  include_directories(
-    ${COMPONENTS_DIR}/utils/include/utils/qdb_wrapper/
-  )
 endif()
 
 file (GLOB SOURCES
@@ -359,7 +337,7 @@ if (${HMI_DBUS_API})
     set (HMI_COMMANDS_SOURCES ${HMI_COMMANDS_SOURCES} ${HMI_COMMANDS_SOURCES_DBUS})
 endif (${HMI_DBUS_API})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (LIBRARIES
   HMI_API
   MOBILE_API
@@ -384,11 +362,7 @@ set (LIBRARIES
 )
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  list(APPEND LIBRARIES sqlite3)
-endif ()
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "QNX" OR CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   list(REMOVE_ITEM LIBRARIES dl)
 endif()
 

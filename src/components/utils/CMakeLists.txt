@@ -45,21 +45,7 @@ include_directories (
   ${SQLITE3_INCLUDE_DIRECTORY}
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/include/win32
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include/arch/win32
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include
-    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-  )
-  if(BUILD_TESTS)
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/gmock-1.7.0/gtest/include
-	  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/gmock-1.7.0/include
-    )
-  endif()
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   include_directories(
     ${CMAKE_SOURCE_DIR}/include/wince
     ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include
@@ -98,7 +84,7 @@ set (SOURCES
     ${UTILS_SRC_DIR}/timer.cc
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   list (APPEND SOURCES
     ${UTILS_SRC_DIR}/global.cc
   )
@@ -120,50 +106,27 @@ if (BUILD_BACKTRACE_SUPPORT)
     )
 endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
-    list(APPEND SOURCES
-    ${UTILS_SRC_DIR}/threads/pulse_thread_delegate.cc
-    )
-endif()
-
 add_library("Utils" ${SOURCES})
 
-if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
-    # --- QDB Wrapper 
-    add_subdirectory(./src/qdb_wrapper)
-else ()
-    # --- SQLite Wrapper
-    add_subdirectory(./src/sqlite_wrapper)
-endif ()
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
- list(APPEND LIBRARIES dl) 
-endif()
+# --- SQLite Wrapper
+add_subdirectory(./src/sqlite_wrapper)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   list(APPEND LIBRARIES sdk_ext)
 endif()
+
 if(ENABLE_LOG)
   list(APPEND LIBRARIES log4cxx -L${LOG4CXX_LIBS_DIRECTORY})
   list(APPEND LIBRARIES apr-1 -L${APR_LIBS_DIRECTORY})
   list(APPEND LIBRARIES aprutil-1 -L${APR_UTIL_LIBS_DIRECTORY})
   list(APPEND LIBRARIES ConfigProfile)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-else()
-  add_dependencies(Utils install-3rd_party_logger)
-endif()
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  target_link_libraries("Utils" pthread ${RTLIB})
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   target_link_libraries("Utils" pthreadVC2  ${RTLIB})
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  target_link_libraries("Utils" kernel32)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   target_link_libraries("Utils" toolhelp)
 endif()
 

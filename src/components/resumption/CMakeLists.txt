@@ -37,12 +37,6 @@ include_directories (
   ${LOG4CXX_INCLUDE_DIRECTORY}
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-	)
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     include_directories(
       ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1

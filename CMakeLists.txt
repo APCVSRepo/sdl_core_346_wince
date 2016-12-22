@@ -43,7 +43,7 @@ option(BUILD_USB_SUPPORT "libusb support" ON)
 option(BUILD_BACKTRACE_SUPPORT "backtrace support" ON)
 option(BUILD_TESTS "Possibility to build and run tests" OFF)
 option(TELEMETRY_MONITOR "Enable profiling time test util" OFF)
-option(ENABLE_LOG "Logging feature" OFF)
+option(ENABLE_LOG "Logging feature" ON)
 option(ENABLE_GCOV "gcov code coverage feature" OFF)
 option(ENABLE_SANITIZE "Sanitize tool" OFF)
 option(ENABLE_SECURITY "Security Ford protocol protection" ON)
@@ -184,63 +184,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 # flag is handled by CMake
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
 set(ARCHIVE_OUTPUT_DIRECTORY ./bin)
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  set(CMAKE_CXX_FLAGS "-fPIC -std=gnu++0x -Wall -Wno-deprecated-declarations -Wuninitialized -Wvla")
 
-  if(ENABLE_SANITIZE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
-  endif()
-  if(ENABLE_GCOV)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-    add_definitions(-DGCOV_ENABLED)
-  endif()
-  
-  set (CMAKE_CXX_FLAGS_RELEASE "-fPIC -s -O2") #It will be appended to CMAKE_CXX_FLAGS in release
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  set (CMAKE_CXX_FLAGS "-g3 -ggdb3 -std=gnu++0x -Werror=return-type -Wuninitialized --coverage -std=c++0x") # -stdlib=libc++ -m32
-  set (CMAKE_CXX_FLAGS_RELEASE "-s -O2") #It will be appended to CMAKE_CXX_FLAGS in release
-  #set (CMAKE_EXE_LINKER_FLAGS "-stdlib=libc++")
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  set (CMAKE_CXX_FLAGS "/wd\"4819\" /wd\"4244\" /wd\"4390\" /wd\"4430\" /EHsc /bigobj")
-  set (CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS})  
-  set (CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") #It will be appended to CMAKE_CXX_FLAGS in release
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   set (CMAKE_CXX_FLAGS "/wd\"4819\" /wd\"4244\" /wd\"4390\" /wd\"4996\"  /EHsc /bigobj /Z7 /GF")
   set (CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") #It will be appended to CMAKE_CXX_FLAGS in release
   set (CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS})  
   set (CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:CONSOLE /ENTRY:")  
-endif()
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  set(CMAKE_CXX_FLAGS_RELEASE " -DNDEBUG -s -O2")
-  set(CMAKE_CXX_FLAGS_DEBUG   " -DDEBUG -g3 -ggdb3")
-endif()
-
-if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  add_definitions(-DOS_LINUX)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "QNX")
-  add_definitions(-DOS_QNX)
-  set(BUILD_BT_SUPPORT OFF)
-  set(BUILD_BACKTRACE_SUPPORT OFF)
-  set(EXTENDED_MEDIA_MODE OFF)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_definitions(-DOS_WIN32)
-  add_definitions(-DWIN32)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-  add_definitions(-DWIN32_LEAN_AND_MEAN)
-  add_definitions(-DASR_HAS_VR)
-  add_definitions(-DMODIFY_FUNCTION_SIGN)
-  set (BUILD_AVAHI_SUPPORT OFF)
-  set (BUILD_USB_SUPPORT ON)
-  set (BUILD_BT_SUPPORT OFF)
-  set (EXTENDED_MEDIA_MODE OFF)
-  set (BUILD_BACKTRACE_SUPPORT OFF)
-  set (ENABLE_SECURITY ON)
-  add_definitions(-DLOG4CXX_STATIC)
-  add_definitions(-DAPR_DECLARE_STATIC)
-  add_definitions(-DAPU_DECLARE_STATIC)
-  add_definitions(-DPTW32_STATIC_LIB)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   add_definitions(-D_WIN32_WCE=$(CEVER))
   add_definitions(-D_CONSOLE)
   add_definitions(-DUNDER_CE)
@@ -255,7 +205,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   add_definitions(-D_WIN32)
   add_definitions(-DLOG4CXX_STATIC)
   add_definitions(-DAPR_DECLARE_STATIC)
-  add_definitions(-DMODIFY_FUNCTION_SIGN)
   set (BUILD_BT_SUPPORT OFF)
   set (BUILD_USB_SUPPORT ON)
   set (BUILD_AVAHI_SUPPORT OFF)
@@ -291,12 +240,8 @@ if (TELEMETRY_MONITOR)
   add_definitions(-DTELEMETRY_MONITOR)
 endif()
 
-# TODO(AK): check current OS here
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  add_definitions(-DOS_POSIX)
-endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE" OR CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 #option(CMAKE_BUILD_TYPE "build type" "Debug")
 #set(CMAKE_BUILD_TYPE "Release")
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -310,27 +255,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE
     set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG" )
     add_definitions(-DDEBUG)
   endif()
-else()
-  # FIXME(DC): weird logic
-  if(CMAKE_C_FLAGS_DEBUG)
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG" )
-    add_definitions(-DDEBUG)
-  else(CMAKE_C_FLAGS_DEBUG)
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRELEASE" )
-    add_definitions(-DRELEASE)
-  endif(CMAKE_C_FLAGS_DEBUG)
 endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "QNX" OR CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
-  if(EXTENDED_MEDIA_MODE)
-    add_definitions(-DEXTENDED_MEDIA_MODE)
-    # required to find 'glibconfig.h'
-    find_package(PkgConfig)
-    pkg_check_modules(GLIB2 REQUIRED glib-2.0)
-    add_definitions(${GLIB2_CFLAGS})
-  endif()
-endif()
-
 
 # --- Interface generator
 
@@ -341,34 +266,6 @@ if(NOT PYTHONINTERP_FOUND)
   message(STATUS "sudo apt-get install python")
   message(FATAL_ERROR "Exiting!")
 endif(NOT PYTHONINTERP_FOUND)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  if(HMI STREQUAL "qt")
-    cmake_minimum_required(VERSION 2.8.11)
-    if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
-      set (qt_version "4.8.5")
-    else ()
-      set (qt_version "5.1.0")
-    endif()
-
-    execute_process(
-      COMMAND ${CMAKE_SOURCE_DIR}/FindQt.sh -v ${qt_version}
-      OUTPUT_VARIABLE qt_bin_dir
-    )
-    message(STATUS "Binary directory Qt ${qt_version} is ${qt_bin_dir}")
-    set (ENV{PATH} ${qt_bin_dir}:$ENV{PATH})
-
-    if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
-      find_package(Qt4 ${qt_version} REQUIRED QtCore QtGui QtDBus QtDeclarative)
-    else ()
-      find_package(Qt5Core REQUIRED)
-      find_package(Qt5DBus REQUIRED)
-      find_package(Qt5Qml REQUIRED)
-      find_package(Qt5Quick REQUIRED)
-      set (qmlplugindump_binary ${qt_bin_dir}/qmlplugindump)
-    endif()
-  endif()
-endif()
 
 set(INTEFRACE_GENERATOR "${PROJECT_SOURCE_DIR}/tools/InterfaceGenerator/Generator.py")
 set(INTEFRACE_GENERATOR_CMD ${PYTHON_EXECUTABLE} -B ${INTEFRACE_GENERATOR})
@@ -401,7 +298,7 @@ macro (GenerateInterface arg_xml_name arg_namespace parser_type)
     add_library("${file_name}" ${cpp_file})
 endmacro(GenerateInterface)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   # --- Useful macro
   macro(create_test NAME SOURCES LIBS)
     add_executable("${NAME}" ${CMAKE_SOURCE_DIR}/src/components/test_main.cc ${SOURCES})
@@ -424,28 +321,13 @@ endif()
 include_directories (
 ${CMAKE_SOURCE_DIR}/include/all
 )
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  include_directories (
-    ${CMAKE_SOURCE_DIR}/include/win32
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apache-log4cxx-0.10.0/src/main/include
-  )
-  LINK_DIRECTORIES(
-    ${CMAKE_SOURCE_DIR}/lib/win32
-  )
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   include_directories (
     ${CMAKE_SOURCE_DIR}/include/wince
     ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apache-log4cxx-0.10.0/src/main/include
   )
   LINK_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/lib/wince
-  )
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  include_directories (
-    /usr/local/Cellar/log4cxx/0.10.0/include
-    )
-  LINK_DIRECTORIES(
-    /usr/local/Cellar/log4cxx/0.10.0/lib
   )
 endif()
 
@@ -460,18 +342,7 @@ endmacro(LIST_REPLACE)
 # Building application
 
 # --- Type HMI
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  if(HMI STREQUAL "qt")
-    set (QT_HMI ON)
-    add_definitions(-DQT_HMI)
-    elseif(HMI STREQUAL "web")
-    set (WEB_HMI ON)
-    add_definitions(-DWEB_HMI)
-    else ()
-    set (HMI "no")
-    add_definitions(-DNO_HMI)
-  endif()
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     set (WEB_HMI ON)
     add_definitions(-DWEB_HMI)
 endif()
@@ -538,211 +409,6 @@ if(FORCE_3RD_PARTY)
   endif()
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-else()
-if(ENABLE_LOG)
-  if(NO_REBUILD_3RD_PARTY_LOGGER)
-    message(STATUS "Not rebuilding logger.")
-  else()
-    if(FORCE_3RD_PARTY_LOGGER)
-      message(STATUS "Force to rebuild logger.")
-
-      #build logger
-      add_custom_target(3rd_party_logger
-        make
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-
-      #install logger
-      #install either to default place with sudo or non-default plase without sudo.
-      #to install with sudo to non-default place use manual installation
-      add_custom_target(install-3rd_party_logger
-        COMMAND /bin/bash -c \"USE_DEFAULT_3RD_PARTY_PATH=${USE_DEFAULT_3RD_PARTY_PATH}\;
-                               if [ \\$$USE_DEFAULT_3RD_PARTY_PATH == "true" ]\; then
-                                 sudo -k \;
-                                 sudo make install\;
-                               else
-                                 make install\;
-                               fi\"
-        DEPENDS 3rd_party_logger
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-    else()
-      #build logger
-      add_custom_target(3rd_party_logger
-        COMMAND /bin/bash -c \"cd ${CMAKE_CURRENT_SOURCE_DIR} &&
-                               grep .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/liblog4cxx.so 1>/dev/null 2>&1\;
-                               if [ \\$$? == 0 ]\; then
-                                 VAR1=\\$$\( readelf -p .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/liblog4cxx.so 2>/dev/null\)\;
-                                 VAR1=\\$$\(echo \\$$VAR1 | awk '{print \\$$NF}'\)\;
-                                 VAR2=-1\;
-                                 cd ${CMAKE_CURRENT_SOURCE_DIR}\;
-                                 git log . 1>/dev/null 2>&1\;
-                                 if [ \\$$? == 0 ]; then
-                                     VAR2=\\$$\(git log --pretty=\"format:%H\" -1 ${3RD_PARTY_SOURCE_DIRECTORY}/apache-log4cxx-0.10.0\)\;
-                                 fi\;
-                                 if [ \\$$VAR1 != \\$$VAR2 ]\; then
-                                   echo " Need to rebuild logger. " \;
-                                   cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                   make\;
-                                 else
-                                   echo " Logger is actual. " \;
-                                 fi\;
-                               else
-                                 echo " Need to build logger. " \;
-                                 cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                 make\;
-                               fi\"
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-
-      #install logger
-      #install either to default place with sudo or non-default plase without sudo.
-      #to install with sudo to non-default place use manual installation
-      add_custom_target(install-3rd_party_logger
-        COMMAND /bin/bash -c \"cd ${CMAKE_CURRENT_SOURCE_DIR} &&
-                               grep .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/liblog4cxx.so 1>/dev/null 2>&1\;
-                               if [ \\$$? == 0 ]\; then
-                                 VAR1=\\$$\( readelf -p .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/liblog4cxx.so 2>/dev/null\)\;
-                                 VAR1=\\$$\(echo \\$$VAR1 | awk '{print \\$$NF}'\)\;
-                                 VAR2=-1\;
-                                 cd ${CMAKE_CURRENT_SOURCE_DIR}\;
-                                 git log . 1>/dev/null 2>&1\;
-                                 if [ \\$$? == 0 ]; then
-                                     VAR2=\\$$\(git log --pretty=\"format:%H\" -1 ${3RD_PARTY_SOURCE_DIRECTORY}/apache-log4cxx-0.10.0\)\;
-                                 fi\;
-                                 if [ \\$$VAR1 != \\$$VAR2 ]\; then
-                                   USE_DEFAULT_3RD_PARTY_PATH=${USE_DEFAULT_3RD_PARTY_PATH}\;
-                                   if [ \\$$USE_DEFAULT_3RD_PARTY_PATH == "true" ]\; then
-                                     cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                     sudo -k \;
-                                     sudo make install\;
-                                   else
-                                     cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                     make install\;
-                                   fi\;
-                                 fi\;
-                               else
-                                 USE_DEFAULT_3RD_PARTY_PATH=${USE_DEFAULT_3RD_PARTY_PATH}\;
-                                 if [ \\$$USE_DEFAULT_3RD_PARTY_PATH == "true" ]\; then
-                                   cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                   sudo -k \;
-                                   sudo make install\;
-                                 else
-                                   cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                   make install\;
-                                 fi\;
-                               fi\"
-        DEPENDS 3rd_party_logger
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-    endif()
-
-    set (install-3rd_party_logger_var "install-3rd_party_logger")
-  endif()
-endif()
-
-if (HMIADAPTER STREQUAL "dbus")
-  if(NO_REBUILD_3RD_PARTY_DBUS)
-  	message(STATUS "Not rebuilding D-Bus.")
-  else()
-    if(FORCE_3RD_PARTY_DBUS)
-      message(STATUS "Force to rebuild D-Bus.")
-
-      #build d-bus
-      add_custom_target(3rd_party_dbus
-        make
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-
-      #install d-bus
-      #install either to default place with sudo or non-default plase without sudo.
-      #to install with sudo to non-default place use manual installation
-      add_custom_target(install-3rd_party_dbus
-        COMMAND /bin/bash -c \"USE_DEFAULT_3RD_PARTY_PATH=${USE_DEFAULT_3RD_PARTY_PATH}\;
-                               if [ \\$$USE_DEFAULT_3RD_PARTY_PATH == "true" ]\; then
-                                 sudo -k \;
-                                 sudo make install\;
-                               else
-                                 make install\;
-                               fi\"
-        DEPENDS 3rd_party_dbus
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-    else()
-      #build d-bus
-      add_custom_target(3rd_party_dbus
-        COMMAND /bin/bash -c \"grep .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/libdbus-1.so 1>/dev/null 2>&1\;
-                               if [ \\$$? == 0 ]\; then
-                                 VAR1=\\$$\(readelf -p .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/libdbus-1.so 2>/dev/null\)\;
-                                 VAR1=\\$$\(echo \\$$VAR1 | awk '{print \\$$NF}'\)\;
-                                 VAR2=-1\;
-                                 cd ${CMAKE_CURRENT_SOURCE_DIR}\;
-                                 git log . 1>/dev/null 2>&1\;
-                                 if [ \\$$? == 0 ]; then
-                                     VAR2=\\$$\(git log --pretty=\"format:%H\" -1 ${3RD_PARTY_SOURCE_DIRECTORY}/dbus-1.7.8\)\;
-                                 fi\;
-                                 if [ \\$$VAR1 != \\$$VAR2 ]\; then
-                                   echo " Need to rebuild D-Bus. " \;
-                                   cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                   make\;
-                                 else
-                                   echo " D-Bus is actual. " \;
-                                 fi\;
-                               else
-                                 echo " Need to build D-Bus. " \;
-                                 cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                 make\;
-                               fi\"
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-
-      #install d-bus
-      #install either to default place with sudo or non-default plase without sudo.
-      #to install with sudo to non-default place use manual installation
-      add_custom_target(install-3rd_party_dbus
-        COMMAND /bin/bash -c \"grep .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/libdbus-1.so 1>/dev/null 2>&1\;
-                               if [ \\$$? == 0 ]\; then
-                                 VAR1=\\$$\(readelf -p .commit_hash ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib/libdbus-1.so 2>/dev/null\)\;
-                                 VAR1=\\$$\(echo \\$$VAR1 | awk '{print \\$$NF}'\)\;
-                                 VAR2=-1\;
-                                 cd ${CMAKE_CURRENT_SOURCE_DIR}\;
-                                 git log . 1>/dev/null 2>&1\;
-                                 if [ \\$$? == 0 ]; then
-                                     VAR2=\\$$\(git log --pretty=\"format:%H\" -1 ${3RD_PARTY_SOURCE_DIRECTORY}/dbus-1.7.8\)\;
-                                 fi\;
-                                 if [ \\$$VAR1 != \\$$VAR2 ]\; then
-                                   USE_DEFAULT_3RD_PARTY_PATH=${USE_DEFAULT_3RD_PARTY_PATH}\;
-                                   if [ \\$$USE_DEFAULT_3RD_PARTY_PATH == "true" ]\; then
-                                     cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                     sudo -k \;
-                                     sudo make install\;
-                                   else
-                                     cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                     make install\;
-                                   fi\;
-                                 fi\;
-                               else
-                                 USE_DEFAULT_3RD_PARTY_PATH=${USE_DEFAULT_3RD_PARTY_PATH}\;
-                                 if [ \\$$USE_DEFAULT_3RD_PARTY_PATH == "true" ]\; then
-                                   cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                   sudo -k \;
-                                   sudo make install\;
-                                 else
-                                   cd ${3RD_PARTY_BINARY_DIRECTORY}\;
-                                   make install\;
-                                 fi\;
-                               fi\"
-        DEPENDS 3rd_party_dbus
-        WORKING_DIRECTORY ${3RD_PARTY_BINARY_DIRECTORY}
-      )
-    endif()
-
-    set (install-3rd_party_dbus_var "install-3rd_party_dbus")
-  endif()
-endif()
-endif()
-
 add_subdirectory(${3RD_PARTY_SOURCE_DIRECTORY} ${3RD_PARTY_BINARY_DIRECTORY} EXCLUDE_FROM_ALL)
 add_custom_target(install-3rd_party
   DEPENDS ${install-3rd_party_logger_var}
@@ -767,14 +433,8 @@ if(ENABLE_HMI_PTU_DECRYPTION)
 endif()
 
 #set (RTLIB rt)
-if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
-set(RTLIB )
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-set (RTLIB )
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (RTLIT )
-else()
-set (RTLIB rt)
 endif()
 
 # Building tests

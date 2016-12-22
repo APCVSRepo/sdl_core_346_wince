@@ -65,7 +65,7 @@ set(LIBRARIES
 else(EXTENDED_MEDIA_MODE)
 set(default_includes
 )
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set(default_sources
     ${COMPONENTS_DIR}/media_manager/src/audio/socket_audio_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/audio/file_audio_streamer_adapter.cc
@@ -73,21 +73,6 @@ set(default_sources
     ${COMPONENTS_DIR}/media_manager/src/video/file_video_streamer_adapter.cc
 	${COMPONENTS_DIR}/media_manager/src/video/callback_video_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/socket_streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/file_streamer_adapter.cc
-	${COMPONENTS_DIR}/media_manager/src/callback_streamer_adapter.cc
-)
-else()
-set(default_sources
-    ${COMPONENTS_DIR}/media_manager/src/audio/socket_audio_streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/audio/pipe_audio_streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/audio/file_audio_streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/video/socket_video_streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/video/pipe_video_streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/video/file_video_streamer_adapter.cc
-	${COMPONENTS_DIR}/media_manager/src/video/callback_video_streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/streamer_adapter.cc
-    ${COMPONENTS_DIR}/media_manager/src/pipe_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/socket_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/file_streamer_adapter.cc
 	${COMPONENTS_DIR}/media_manager/src/callback_streamer_adapter.cc
@@ -118,12 +103,6 @@ include_directories (
     ${default_includes}
     ${LOG4CXX_INCLUDE_DIRECTORY}
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	include_directories(
-	  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-	)
-endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     include_directories(

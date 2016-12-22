@@ -16,6 +16,3 @@ if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 endif()
 
 add_library(pthreadVC2 ${HEADERS} ${SOURCES})
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  target_link_libraries(pthreadVC2 ws2_32)
-endif()

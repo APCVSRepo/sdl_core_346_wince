@@ -43,12 +43,6 @@ include_directories (
   ${LOG4CXX_INCLUDE_DIRECTORY}
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	include_directories(
-	  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-	)
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     include_directories(
       ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
@@ -89,36 +83,22 @@ if (BUILD_USB_SUPPORT)
     ${TM_SRC_DIR}/usb/usb_connection_factory.cc
     ${TM_SRC_DIR}/usb/usb_device_scanner.cc
   )
-  if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     list (APPEND SOURCES
     ${TM_SRC_DIR}/usb/libusb/usb_handler.cc
     ${TM_SRC_DIR}/usb/libusb/usb_connection.cc
     ${TM_SRC_DIR}/usb/libusb/platform_usb_device.cc
     )
-  elseif(CMAKE_SYSTEM_NAME STREQUAL "QNX")
-    list(APPEND SOURCES
-    ${TM_SRC_DIR}/usb/qnx/usb_handler.cc
-    ${TM_SRC_DIR}/usb/qnx/usb_connection.cc
-    ${TM_SRC_DIR}/usb/qnx/platform_usb_device.cc
-    )
   endif()
 endif(BUILD_USB_SUPPORT)
 
-
-if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
-endif()
-
 add_library(${target} ${SOURCES})
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   target_link_libraries(${target} ProtocolLibrary pthreadVC2)
-else()
-  target_link_libraries(${target} ProtocolLibrary)
 endif()
 
 if (BUILD_USB_SUPPORT)
-  if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
-    target_link_libraries(${target} usbdi)
-  elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows"  OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+  if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     target_link_libraries(${target} Libusb-1.0.16)
   endif()
 endif(BUILD_USB_SUPPORT)

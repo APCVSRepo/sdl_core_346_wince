@@ -46,12 +46,6 @@ include_directories (
     ${LOG4CXX_INCLUDE_DIRECTORY}
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	include_directories(
-	  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-	)
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     include_directories(
       ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
@@ -63,19 +57,11 @@ if(HMIADAPTER STREQUAL "dbus")
     set (DBUS_ADAPTER DBus)
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (SOURCES
     ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_handler_impl.cc
     ${COMPONENTS_DIR}/hmi_message_handler/src/messagebroker_adapter.cc
     ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_adapter_impl.cc
-    ${DBUS_SOURCE}
-)
-else()
-set (SOURCES
-    ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_handler_impl.cc
-    ${COMPONENTS_DIR}/hmi_message_handler/src/messagebroker_adapter.cc
-    ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_adapter_impl.cc
-    ${COMPONENTS_DIR}/hmi_message_handler/src/mqueue_adapter.cc
     ${DBUS_SOURCE}
 )
 endif()

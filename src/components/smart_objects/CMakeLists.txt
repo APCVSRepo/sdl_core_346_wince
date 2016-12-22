@@ -36,12 +36,6 @@ include_directories (
   ${COMPONENTS_DIR}/utils/include/
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include_directories(
-        ${CMAKE_SOURCE_DIR}/include/win32
-    )
-endif()
-
 set (SOURCES
     ${SMART_OBJECTS_SRC_DIR}/smart_object.cc
     ${SMART_OBJECTS_SRC_DIR}/smart_schema.cc

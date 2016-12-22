@@ -64,9 +64,5 @@ add_definitions(-DAPU_DECLARE_STATIC)
 
 add_library("aprutil-1" ${APR_UTIL_SOURCES})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-#list(APPEND LIBRARIES ws2_32 odbc32 kernel32 ) 
-endif()
-
 target_link_libraries("aprutil-1" expat )
 

@@ -30,15 +30,6 @@
 
 INCLUDE("./set_3rd_party_paths.cmake")
 
-if(ENABLE_LOG OR HMI_DBUS_API)
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-else()
-  # --- libexpat
-  add_subdirectory(expat-2.1.0)
-  set(EXPAT_LIBS_DIRECTORY ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib PARENT_SCOPE)
-endif()
-endif()
-
 if(ENABLE_LOG)
   set(APR_LIBS_DIRECTORY ${3RD_PARTY_INSTALL_PREFIX_ARCH}/lib PARENT_SCOPE)
   set(APR_INCLUDE_DIRECTORY ${3RD_PARTY_INSTALL_PREFIX}/include PARENT_SCOPE)
@@ -48,16 +39,7 @@ if(ENABLE_LOG)
 endif()
 
 if(ENABLE_LOG)
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  # --- libapr-1
-  add_subdirectory(apr-cmake)
-
-  # --- apr-util
-  add_subdirectory(apr-util-cmake)
-
-  # --- log4cxx
-  add_subdirectory(apache-log4cxx-cmake)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   if(MODIFY_FUNCTION_FLAGS)
     MESSAGE(STATUS  "current binary dir is ${CMAKE_CURRENT_BINARY_DIR}")
     MESSAGE(STATUS  "current source dir is ${CMAKE_CURRENT_SOURCE_DIR}")

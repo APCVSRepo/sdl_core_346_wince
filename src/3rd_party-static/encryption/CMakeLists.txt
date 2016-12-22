@@ -5,9 +5,7 @@ include_directories (
   ./include
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    include_directories(${CMAKE_SOURCE_DIR}/include/win32/)
-elseif(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
     include_directories(${CMAKE_SOURCE_DIR}/include/wince/)
     include_directories(${CMAKE_SOURCE_DIR}/lib/wince/)
 endif()
@@ -17,10 +15,8 @@ set (SOURCES
     ./src/hashing.cc
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
   set (LIBRARIES ssleay32 libeay32)
-else()
-  set (LIBRARIES crypto)
 endif()
 
 add_library(encryption ${SOURCES})
