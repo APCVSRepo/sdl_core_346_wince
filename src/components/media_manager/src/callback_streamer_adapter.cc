@@ -65,17 +65,11 @@ void CallbackStreamerAdapter::SendData(int32_t application_key,
 	if (!is_app_performing_activity(application_key)) {
 		return;
 	}
-#ifdef BUILD_TARGET_LIB
-	s_mediaVideoStreamSendCallback((const char *)msg->data(), msg.get()->data_size());
-#endif
 }
 
 bool CallbackStreamerAdapter::CallbackStreamer::Send(
     protocol_handler::RawMessagePtr msg) {
   LOG4CXX_AUTO_TRACE(logger_);
-#ifdef BUILD_TARGET_LIB
-  s_mediaVideoStreamSendCallback((const char *)msg->data(), msg.get()->data_size());
-#endif
 
   LOG4CXX_INFO(logger_, "Streamer::sent " << msg->data_size());
   return true;
