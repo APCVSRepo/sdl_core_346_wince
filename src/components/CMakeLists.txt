@@ -87,10 +87,10 @@ endif()
 
 if (${HMI_DBUS_API})
 # --- DBus
-    add_subdirectory(./dbus)
+  add_subdirectory(./dbus)
 endif ()
 if (${QT_HMI})
 # --- Qt HMI
-    add_subdirectory(./qt_hmi)
+  add_subdirectory(./qt_hmi)
 endif ()
 

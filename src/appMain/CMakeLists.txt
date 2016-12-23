@@ -28,7 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-IF (HMIADAPTER STREQUAL "messagebroker")
+if (HMIADAPTER STREQUAL "messagebroker")
 set (BROKER_LIBRARIES
   MessageBrokerClient
   MessageBrokerServer
@@ -52,8 +52,7 @@ set(default_media_inc
 endif()
 
 if (TELEMETRY_MONITOR)
-    set(TELEMETRY_MONITOR_LIB
-        TelemetryMonitor)
+  set(TELEMETRY_MONITOR_LIB TelemetryMonitor)
 endif()
 
 set(LIBRARIES
@@ -79,11 +78,10 @@ set(LIBRARIES
   jsoncpp
   ConfigProfile
   Resumption
+  pthreadVC2
+  sdk_ext
+  ws2
 )
-
-if (CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  list(APPEND LIBRARIES pthreadVC2 sdk_ext ws2)
-endif()
 
 if (BUILD_BT_SUPPORT)
   list(APPEND LIBRARIES bluetooth)
@@ -128,14 +126,9 @@ include_directories (
   ${LOG4CXX_INCLUDE_DIRECTORY}
   ${CMAKE_SOURCE_DIR}/src/3rd_party/dbus-1.7.8
   ${CMAKE_SOURCE_DIR}/src/3rd_party/dbus-1.7.8/dbus/
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
+  ${CMAKE_SOURCE_DIR}/lib/wince
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-      ${CMAKE_SOURCE_DIR}/lib/wince
-    )
-endif()
 
 set (SOURCES
   main.cc
@@ -154,18 +147,17 @@ if( NOT CMAKE_BUILD_TYPE )
 endif()
 
 if(BUILD_TARGET_LIBRARY)
-add_library(${PROJECT} SHARED ${HEADERS} ${SOURCES})
+  add_library(${PROJECT} SHARED ${HEADERS} ${SOURCES})
 else()
-add_executable(${PROJECT} ${SOURCES})
+  add_executable(${PROJECT} ${SOURCES})
 endif()
+
 target_link_libraries(${PROJECT} ${LIBRARIES})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 SET_TARGET_PROPERTIES(${PROJECT} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}")
 else()
 SET_TARGET_PROPERTIES(${PROJECT} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}")
-endif()
 endif()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/log4cxx.properties DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -173,22 +165,21 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/audio.8bit.wav DESTINATION ${CMAKE_CURRENT
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/smartDeviceLink.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/hmi_capabilities.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/sdl_preloaded_pt.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    install(FILES  ${CMAKE_SOURCE_DIR}/lib/wince/msvcr90.dll DESTINATION bin)
-  elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    install(FILES  ${CMAKE_SOURCE_DIR}/lib/wince/msvcr90d.dll DESTINATION bin)
-  endif()
-  
-  if(ENABLE_LOG)
-	install(FILES ${CMAKE_BINARY_DIR}/src/plugins/appenders/${CMAKE_BUILD_TYPE}/appenders.dll DESTINATION bin)
-  endif()
-  
-  if(BUILD_TESTS)
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    install(FILES  ${CMAKE_SOURCE_DIR}/tools/config_test.sh DESTINATION bin)
-    install(FILES  ${CMAKE_SOURCE_DIR}/tools/run_ut.bat DESTINATION bin)
-  endif()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  install(FILES  ${CMAKE_SOURCE_DIR}/lib/wince/msvcr90.dll DESTINATION bin)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  install(FILES  ${CMAKE_SOURCE_DIR}/lib/wince/msvcr90d.dll DESTINATION bin)
+endif()
+
+if(ENABLE_LOG)
+install(FILES ${CMAKE_BINARY_DIR}/src/plugins/appenders/${CMAKE_BUILD_TYPE}/appenders.dll DESTINATION bin)
+endif()
+
+if(BUILD_TESTS)
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  install(FILES  ${CMAKE_SOURCE_DIR}/tools/config_test.sh DESTINATION bin)
+  install(FILES  ${CMAKE_SOURCE_DIR}/tools/run_ut.bat DESTINATION bin)
 endif()
 
 # Replace commit in ini file
@@ -217,29 +208,22 @@ if (${QT_HMI})
   set(main_qml "hmi/MainWindow.qml")
   set(plugins_dir "hmi/plugins")
 
-  if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
-    set(start_command "./start-qml.sh")
-    set(command_arguments "${main_qml} ${plugins_dir}")
-  else ()
-    execute_process(
-      COMMAND ${CMAKE_SOURCE_DIR}/FindQt.sh -v ${qt_version} -b qmlscene
-      OUTPUT_VARIABLE start_command
-    )
-    set(command_arguments "${main_qml} -I ${plugins_dir}")
-  endif ()
+  execute_process(
+    COMMAND ${CMAKE_SOURCE_DIR}/FindQt.sh -v ${qt_version} -b qmlscene
+    OUTPUT_VARIABLE start_command
+  )
+  set(command_arguments "${main_qml} -I ${plugins_dir}")
 
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/start_hmi.sh
     "#!/bin/sh\n${start_command} ${command_arguments}\n")
 endif ()
 
 # Install rules
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  if(BUILD_TARGET_LIBRARY)
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/smartDeviceLinkCore.dll" DESTINATION bin)
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Release/smartDeviceLinkCore.lib" DESTINATION bin)
-  else()
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/smartDeviceLinkCore.exe" DESTINATION bin)
-  endif()
+if(BUILD_TARGET_LIBRARY)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/smartDeviceLinkCore.dll" DESTINATION bin)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Release/smartDeviceLinkCore.lib" DESTINATION bin)
+else()
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/smartDeviceLinkCore.exe" DESTINATION bin)
 endif()
 
 install(

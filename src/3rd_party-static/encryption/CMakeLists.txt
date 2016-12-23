@@ -6,18 +6,16 @@ include_directories (
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(${CMAKE_SOURCE_DIR}/include/wince/)
-    include_directories(${CMAKE_SOURCE_DIR}/lib/wince/)
+  include_directories(${CMAKE_SOURCE_DIR}/include/wince/)
+  include_directories(${CMAKE_SOURCE_DIR}/lib/wince/)
 endif()
 
 set (SOURCES
-    ./src/Base64.cpp
-    ./src/hashing.cc
+  ./src/Base64.cpp
+  ./src/hashing.cc
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  set (LIBRARIES ssleay32 libeay32)
-endif()
+set (LIBRARIES ssleay32 libeay32)
 
 add_library(encryption ${SOURCES})
 target_link_libraries(encryption ${LIBRARIES})

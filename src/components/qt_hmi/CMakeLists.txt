@@ -32,11 +32,11 @@
 add_subdirectory(./qml_plugins)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
-    add_subdirectory(./qml_model_qt4)
+  add_subdirectory(./qml_model_qt4)
 else ()
-    add_subdirectory(./qml_model_qt5)
+  add_subdirectory(./qml_model_qt5)
 endif ()
 
 if(HMI STREQUAL "qt" AND BUILD_TESTS)
-    add_subdirectory(test)
+  add_subdirectory(test)
 endif()

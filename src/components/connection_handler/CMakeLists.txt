@@ -32,30 +32,21 @@
 set(CH_SRC_DIR ${COMPONENTS_DIR}/connection_handler/src)
 
 include_directories (
-    include
-    ${COMPONENTS_DIR}/protocol_handler/include/
-    ${COMPONENTS_DIR}/utils/include/
-    ${COMPONENTS_DIR}/resumption/include
-    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/jsoncpp/include
-    ${ENCRYPTION_INCLUDE_DIRECTORY}
-    ${LOG4CXX_INCLUDE_DIRECTORY}
+  ./include
+  ${COMPONENTS_DIR}/protocol_handler/include/
+  ${COMPONENTS_DIR}/utils/include/
+  ${COMPONENTS_DIR}/resumption/include
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/jsoncpp/include
+  ${ENCRYPTION_INCLUDE_DIRECTORY}
+  ${LOG4CXX_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    )
-endif()
 
 set (SOURCES
-    ${CH_SRC_DIR}/connection_handler_impl.cc
-    ${CH_SRC_DIR}/connection.cc
-    ${CH_SRC_DIR}/device.cc
-    ${CH_SRC_DIR}/heartbeat_monitor.cc
-)
-
-set(LIBRARIES
-    ProtocolLibrary
+  ${CH_SRC_DIR}/connection_handler_impl.cc
+  ${CH_SRC_DIR}/connection.cc
+  ${CH_SRC_DIR}/device.cc
+  ${CH_SRC_DIR}/heartbeat_monitor.cc
 )
 
 add_library(connectionHandler ${SOURCES})

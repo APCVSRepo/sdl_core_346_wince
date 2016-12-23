@@ -4,11 +4,11 @@ set(SQLITE3_INCLUDE_DIRECTORY ${SQLITE3_INCLUDE_DIRECTORY} PARENT_SCOPE)
 ADD_DEFINITIONS(-DHYCOMMONWINAPI_EXPORTS)
 
 include_directories(
-    ./
+  ./
 )
 
 set(SQLITE3_SOURCES
-    ./sqlite3.c
+  ./sqlite3.c
 )
 
 add_library("sqlite3" ${SQLITE3_SOURCES})

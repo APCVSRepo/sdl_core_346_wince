@@ -10,7 +10,6 @@ include_directories (
   ./
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (LIBUSB_SOURCES
 	./libusb/missing.c
 	./libusb/core.c
@@ -23,6 +22,5 @@ set (LIBUSB_SOURCES
 	./libusb/os/poll_windows.c
 	./libusb/os/threads_windows.c
 )
-endif()
 
 add_library("Libusb-1.0.16" ${LIBUSB_SOURCES})

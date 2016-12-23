@@ -43,24 +43,19 @@ include_directories (
   ${CMAKE_SOURCE_DIR}/src/3rd_party/sqlite3
   ${LOG4CXX_INCLUDE_DIRECTORY}
   ${SQLITE3_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/include/wince
+  ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include
+  ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include/arch/win32
+  ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/sdk_ext/include
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
+if(BUILD_TESTS)
   include_directories(
-    ${CMAKE_SOURCE_DIR}/include/wince
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include/arch/win32
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apr/include
-    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/sdk_ext/include
-endif()
+    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/gmock-1.7.0/gtest/include
+    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/gmock-1.7.0/include
   )
-  if(BUILD_TESTS)
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/gmock-1.7.0/gtest/include
-	  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/gmock-1.7.0/include
-    )
-  endif()
 endif()
 
 set (SOURCES
@@ -82,13 +77,8 @@ set (SOURCES
     ${UTILS_SRC_DIR}/convert_utils.cc
     ${UTILS_SRC_DIR}/custom_string.cc
     ${UTILS_SRC_DIR}/timer.cc
-)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  list (APPEND SOURCES
     ${UTILS_SRC_DIR}/global.cc
-  )
-endif()
+)
 
 if(ENABLE_LOG)
   list(APPEND SOURCES
@@ -111,9 +101,7 @@ add_library("Utils" ${SOURCES})
 # --- SQLite Wrapper
 add_subdirectory(./src/sqlite_wrapper)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  list(APPEND LIBRARIES sdk_ext)
-endif()
+list(APPEND LIBRARIES sdk_ext)
 
 if(ENABLE_LOG)
   list(APPEND LIBRARIES log4cxx -L${LOG4CXX_LIBS_DIRECTORY})
@@ -122,16 +110,7 @@ if(ENABLE_LOG)
   list(APPEND LIBRARIES ConfigProfile)
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  target_link_libraries("Utils" pthreadVC2  ${RTLIB})
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  target_link_libraries("Utils" toolhelp)
-endif()
-
-target_link_libraries("Utils" ${LIBRARIES})
-
+target_link_libraries("Utils" pthreadVC2  ${RTLIB} ${LIBRARIES} toolhelp)
 
 if(BUILD_TESTS)
   add_subdirectory(test)

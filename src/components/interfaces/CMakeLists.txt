@@ -42,39 +42,39 @@ if (${HMI_JSON_API})
 endif (${HMI_JSON_API})
 
 if (${HMI_DBUS_API})
-    set(hpp_file
-      "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API.h"
-      "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.h"
-    )
+  set(hpp_file
+    "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.h"
+  )
 
-    set(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.cc")
-    set(full_xml_name "${CMAKE_CURRENT_SOURCE_DIR}/QT_HMI_API.xml")
+  set(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.cc")
+  set(full_xml_name "${CMAKE_CURRENT_SOURCE_DIR}/QT_HMI_API.xml")
 
-    add_custom_command( OUTPUT ${hpp_file} ${cpp_file}
-                        COMMAND ${INTEFRACE_GENERATOR_CMD} ${full_xml_name} hmi_apis ${CMAKE_CURRENT_BINARY_DIR} "--parser-type" "jsonrpc"
-                        DEPENDS ${INTERFACE_GENERATOR_DEPENDENCIES} ${full_xml_name}
-      COMMENT "Generating files:\n   ${hpp_file}\n   ${cpp_file}\nfrom:\n   QT_HMI_API.xml ..."
-                        VERBATIM
-                       )
+  add_custom_command( OUTPUT ${hpp_file} ${cpp_file}
+                      COMMAND ${INTEFRACE_GENERATOR_CMD} ${full_xml_name} hmi_apis ${CMAKE_CURRENT_BINARY_DIR} "--parser-type" "jsonrpc"
+                      DEPENDS ${INTERFACE_GENERATOR_DEPENDENCIES} ${full_xml_name}
+    COMMENT "Generating files:\n   ${hpp_file}\n   ${cpp_file}\nfrom:\n   QT_HMI_API.xml ..."
+                      VERBATIM
+                     )
 
-    include_directories (
-        ${COMPONENTS_DIR}/smart_objects/include
-        ${COMPONENTS_DIR}/formatters/include/
-        ${CMAKE_BINARY_DIR}
-    )
+  include_directories (
+      ${COMPONENTS_DIR}/smart_objects/include
+      ${COMPONENTS_DIR}/formatters/include/
+      ${CMAKE_BINARY_DIR}
+  )
 
-    add_custom_command(
-          OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/HMI_API.h"
-    COMMAND sed "-e" "s/QT_HMI_API/HMI_API/g" "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API.h" > "${CMAKE_CURRENT_BINARY_DIR}/HMI_API.h"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API.h")
-    add_custom_command(
-          OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.h"
-    COMMAND sed "-e" "s/QT_HMI_API/HMI_API/g" "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.h" > "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.h"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.h")
-    add_custom_command(
-          OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.cc"
-    COMMAND sed "-e" "s/QT_HMI_API/HMI_API/g" "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.cc" > "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.cc"
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.cc" "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.h" "${CMAKE_CURRENT_BINARY_DIR}/HMI_API.h")
+  add_custom_command(
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/HMI_API.h"
+  COMMAND sed "-e" "s/QT_HMI_API/HMI_API/g" "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API.h" > "${CMAKE_CURRENT_BINARY_DIR}/HMI_API.h"
+  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API.h")
+  add_custom_command(
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.h"
+  COMMAND sed "-e" "s/QT_HMI_API/HMI_API/g" "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.h" > "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.h"
+  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.h")
+  add_custom_command(
+        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.cc"
+  COMMAND sed "-e" "s/QT_HMI_API/HMI_API/g" "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.cc" > "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.cc"
+  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/QT_HMI_API_schema.cc" "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.h" "${CMAKE_CURRENT_BINARY_DIR}/HMI_API.h")
   add_library(HMI_API "${CMAKE_CURRENT_BINARY_DIR}/HMI_API_schema.cc")
 endif (${HMI_DBUS_API})
 
