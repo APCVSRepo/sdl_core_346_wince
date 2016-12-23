@@ -55,16 +55,12 @@ include_directories (
   ${ENCRYPTION_INCLUDE_DIRECTORY}
   ${MESSAGE_BROKER_INCLUDE_DIRECTORY}
   ${LOG4CXX_INCLUDE_DIRECTORY}
+  ${COMPONENTS_DIR}/utils/include/utils/sqlite_wrapper/
+  ${CMAKE_SOURCE_DIR}/include/wince
+  ${CMAKE_SOURCE_DIR}/src/LibVrMsp/
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
+  ${COMPONENTS_DIR}/policy/src/policy/policy_table/table_struct
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(
-        ${COMPONENTS_DIR}/utils/include/utils/sqlite_wrapper/
-	    ${CMAKE_SOURCE_DIR}/include/wince
-	    ${CMAKE_SOURCE_DIR}/src/LibVrMsp/
-        ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    )
-endif()
 
 file (GLOB SOURCES
   ${AM_SOURCE_DIR}/src/*
@@ -75,15 +71,12 @@ set (MESSAGE_HELPER_SOURCES
 )
 
 set (POLICIES_MANAGER
-${AM_SOURCE_DIR}/src/policies/policy_handler.cc
-${AM_SOURCE_DIR}/src/policies/policy_event_observer.cc
-${AM_SOURCE_DIR}/src/policies/delegates/app_permission_delegate.cc
-${AM_SOURCE_DIR}/src/policies/delegates/statistics_delegate.cc
+  ${AM_SOURCE_DIR}/src/policies/policy_handler.cc
+  ${AM_SOURCE_DIR}/src/policies/policy_event_observer.cc
+  ${AM_SOURCE_DIR}/src/policies/delegates/app_permission_delegate.cc
+  ${AM_SOURCE_DIR}/src/policies/delegates/statistics_delegate.cc
 )
 
-  include_directories(
-    ${COMPONENTS_DIR}/policy/src/policy/policy_table/table_struct
-  )
 file (GLOB EVENT_ENGINE
   ${AM_SOURCE_DIR}/src/event_engine/*
 )
@@ -97,7 +90,7 @@ file (GLOB MOBILE_COMMANDS_SOURCES
   ${AM_SOURCE_DIR}/src/commands/mobile/*
 )
 
-  set (HMI_COMMANDS_SOURCES
+set (HMI_COMMANDS_SOURCES
   ${AM_SOURCE_DIR}/src/commands/hmi/request_to_hmi.cc
   ${AM_SOURCE_DIR}/src/commands/hmi/response_from_hmi.cc
   ${AM_SOURCE_DIR}/src/commands/hmi/request_from_hmi.cc
@@ -331,13 +324,12 @@ set (HMI_COMMANDS_SOURCES_DBUS
 )
 
 if (${HMI_JSON_API})
-    set (HMI_COMMANDS_SOURCES ${HMI_COMMANDS_SOURCES} ${HMI_COMMANDS_SOURCES_JSON})
+  set (HMI_COMMANDS_SOURCES ${HMI_COMMANDS_SOURCES} ${HMI_COMMANDS_SOURCES_JSON})
 endif (${HMI_JSON_API})
 if (${HMI_DBUS_API})
-    set (HMI_COMMANDS_SOURCES ${HMI_COMMANDS_SOURCES} ${HMI_COMMANDS_SOURCES_DBUS})
+  set (HMI_COMMANDS_SOURCES ${HMI_COMMANDS_SOURCES} ${HMI_COMMANDS_SOURCES_DBUS})
 endif (${HMI_DBUS_API})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (LIBRARIES
   HMI_API
   MOBILE_API
@@ -348,23 +340,6 @@ set (LIBRARIES
   formatters
   dbms
 )
-else()
-set (LIBRARIES
-  HMI_API
-  MOBILE_API
-  v4_protocol_v1_2_no_extra
-  ProtocolLibrary
-  SmartObjects
-  UsageStatistics
-  dl
-  formatters
-  dbms
-)
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  list(REMOVE_ITEM LIBRARIES dl)
-endif()
 
 add_library("AMEventEngine" ${EVENT_ENGINE})
 target_link_libraries("AMEventEngine" ${LIBRARIES})

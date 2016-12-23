@@ -40,14 +40,4 @@ add_subdirectory(./apr)
 
 add_subdirectory(./apr-util)
 
-
 add_subdirectory(./apache-log4cxx-0.10.0)
-
-#add_subdirectory(./log4cxx_test)
-
-#add_executable(${PROJECT} SHARED  log4cxx-1)
-
-
-
-
-

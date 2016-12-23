@@ -30,16 +30,16 @@
 
 
 if (EXTENDED_MEDIA_MODE)
-find_package(Gstreamer-1.0 REQUIRED)
-find_package(Glib-2.0 REQUIRED)
-find_package(PkgConfig)
-pkg_check_modules(GLIB2 REQUIRED glib-2.0)
-add_definitions(${GLIB2_CFLAGS})
-set(default_includes
+  find_package(Gstreamer-1.0 REQUIRED)
+  find_package(Glib-2.0 REQUIRED)
+  find_package(PkgConfig)
+  pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+  add_definitions(${GLIB2_CFLAGS})
+  set(default_includes
     ${GSTREAMER_gst_INCLUDE_DIR}
     ${GLIB_glib_2_INCLUDE_DIR}
-)
-set(default_sources
+  )
+  set(default_sources
     ${COMPONENTS_DIR}/media_manager/src/audio/a2dp_source_player_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/audio/from_mic_recorder_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/audio/from_mic_to_file_recorder_thread.cc
@@ -53,69 +53,61 @@ set(default_sources
     ${COMPONENTS_DIR}/media_manager/src/pipe_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/socket_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/file_streamer_adapter.cc
-)
-set(LIBRARIES
+  )
+  set(LIBRARIES
     ${GSTREAMER_gstreamer_LIBRARY}
     ApplicationManager
     pulse-simple
     pulse
     gobject-2.0
     glib-2.0
-)
+  )
 else(EXTENDED_MEDIA_MODE)
-set(default_includes
-)
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-set(default_sources
+  set(default_includes  )
+
+  set(default_sources
     ${COMPONENTS_DIR}/media_manager/src/audio/socket_audio_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/audio/file_audio_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/video/socket_video_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/video/file_video_streamer_adapter.cc
-	${COMPONENTS_DIR}/media_manager/src/video/callback_video_streamer_adapter.cc
+    ${COMPONENTS_DIR}/media_manager/src/video/callback_video_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/socket_streamer_adapter.cc
     ${COMPONENTS_DIR}/media_manager/src/file_streamer_adapter.cc
-	${COMPONENTS_DIR}/media_manager/src/callback_streamer_adapter.cc
-)
-endif()
-set(LIBRARIES
-    ProtocolLibrary
-)
+    ${COMPONENTS_DIR}/media_manager/src/callback_streamer_adapter.cc
+  )
+
+  set(LIBRARIES ProtocolLibrary)
 endif()
 
 include_directories (
-    include
-    ${COMPONENTS_DIR}/media_manager/include/audio/
-    ${COMPONENTS_DIR}/media_manager/include/video/
-    ${COMPONENTS_DIR}/utils/include/
-    ${COMPONENTS_DIR}/protocol_handler/include/
-    ${COMPONENTS_DIR}/connection_handler/include/
-    ${COMPONENTS_DIR}/application_manager/include/
-    ${COMPONENTS_DIR}/smart_objects/include/
-    ${COMPONENTS_DIR}/hmi_message_handler/include/
-    ${COMPONENTS_DIR}/formatters/include/
-    ${COMPONENTS_DIR}/config_profile/include/
-	${COMPONENTS_DIR}/resumption/include
-    ${JSONCPP_INCLUDE_DIRECTORY}
-    ${CMAKE_BINARY_DIR}/src/components/
-    ${CMAKE_SOURCE_DIR}/src/components/policy/src/policy/include/
-    ${CMAKE_SOURCE_DIR}/src/components/policy/src/policy/usage_statistics/include/
-    ${default_includes}
-    ${LOG4CXX_INCLUDE_DIRECTORY}
+  include
+  ${COMPONENTS_DIR}/media_manager/include/audio/
+  ${COMPONENTS_DIR}/media_manager/include/video/
+  ${COMPONENTS_DIR}/utils/include/
+  ${COMPONENTS_DIR}/protocol_handler/include/
+  ${COMPONENTS_DIR}/connection_handler/include/
+  ${COMPONENTS_DIR}/application_manager/include/
+  ${COMPONENTS_DIR}/smart_objects/include/
+  ${COMPONENTS_DIR}/hmi_message_handler/include/
+  ${COMPONENTS_DIR}/formatters/include/
+  ${COMPONENTS_DIR}/config_profile/include/
+  ${COMPONENTS_DIR}/resumption/include
+  ${JSONCPP_INCLUDE_DIRECTORY}
+  ${CMAKE_BINARY_DIR}/src/components/
+  ${CMAKE_SOURCE_DIR}/src/components/policy/src/policy/include/
+  ${CMAKE_SOURCE_DIR}/src/components/policy/src/policy/usage_statistics/include/
+  ${default_includes}
+  ${LOG4CXX_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    )
-endif()
-
 set (SOURCES
-    ${COMPONENTS_DIR}/media_manager/src/media_adapter_impl.cc
-    ${COMPONENTS_DIR}/media_manager/src/audio/from_mic_recorder_listener.cc
-    ${COMPONENTS_DIR}/media_manager/src/audio/audio_stream_sender_thread.cc
-    ${COMPONENTS_DIR}/media_manager/src/streamer_listener.cc
-    ${COMPONENTS_DIR}/media_manager/src/media_manager_impl.cc
+  ${COMPONENTS_DIR}/media_manager/src/media_adapter_impl.cc
+  ${COMPONENTS_DIR}/media_manager/src/audio/from_mic_recorder_listener.cc
+  ${COMPONENTS_DIR}/media_manager/src/audio/audio_stream_sender_thread.cc
+  ${COMPONENTS_DIR}/media_manager/src/streamer_listener.cc
+  ${COMPONENTS_DIR}/media_manager/src/media_manager_impl.cc
 )
 
 add_library("MediaManager" ${SOURCES} ${default_sources})

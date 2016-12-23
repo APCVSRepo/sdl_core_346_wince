@@ -48,27 +48,22 @@ include_directories (
   ${JSONCPP_INCLUDE_DIRECTORY}
   ${CMAKE_BINARY_DIR}/src/components/
   ${LOG4CXX_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/include/wince
+  ${CMAKE_SOURCE_DIR}/src/3rd_party/apr-1.5.0/include
+  ${CMAKE_SOURCE_DIR}/src/3rd_party/apr-1.5.0/include/arch/win32
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
 )
 
 set(SOURCES
-    ${TELEMETRY_MONITOR_SRC_DIR}/metric_wrapper.cc
-    ${TELEMETRY_MONITOR_SRC_DIR}/telemetry_monitor.cc
-    ${TELEMETRY_MONITOR_SRC_DIR}/application_manager_observer.cc
-    ${TELEMETRY_MONITOR_SRC_DIR}/transport_manager_observer.cc
-    ${TELEMETRY_MONITOR_SRC_DIR}/protocol_handler_observer.cc
-    ${TELEMETRY_MONITOR_SRC_DIR}/application_manager_metric_wrapper.cc
-    ${TELEMETRY_MONITOR_SRC_DIR}/transport_manager_metric_wrapper.cc
-    ${TELEMETRY_MONITOR_SRC_DIR}/protocol_handler_metric_wrapper.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/metric_wrapper.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/telemetry_monitor.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/application_manager_observer.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/transport_manager_observer.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/protocol_handler_observer.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/application_manager_metric_wrapper.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/transport_manager_metric_wrapper.cc
+  ${TELEMETRY_MONITOR_SRC_DIR}/protocol_handler_metric_wrapper.cc
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/include/wince
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apr-1.5.0/include
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apr-1.5.0/include/arch/win32
-    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-  )
-endif()
 
 add_library("TelemetryMonitor" ${SOURCES})
 target_link_libraries("TelemetryMonitor" ${LIBRARIES})

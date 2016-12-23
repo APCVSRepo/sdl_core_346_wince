@@ -39,16 +39,11 @@ include_directories(
   ${COMPONENTS_DIR}/resumption/include
   ${CMAKE_SOURCE_DIR}/src/3rd_party-static/jsoncpp/include
   ${APR_INCLUDE_DIRECTORY}
-   ${OPENSSL_INCLUDE_DIRECTORY}
+  ${OPENSSL_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
+  ${COMPONENTS_DIR}/utils/include
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/sdk_ext/include
 )
-
-if (CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-include_directories(
-    ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    ${COMPONENTS_DIR}/utils/include
-	${CMAKE_SOURCE_DIR}/src/3rd_party-static/sdk_ext/include
-  )
-endif()
 
 set (SOURCES
   ${COMPONENTS_DIR}/security_manager/src/security_manager_impl.cc
@@ -56,13 +51,12 @@ set (SOURCES
   ${COMPONENTS_DIR}/security_manager/src/crypto_manager_impl.cc
   ${COMPONENTS_DIR}/security_manager/src/ssl_context_impl.cc
 )
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    file (GLOB inc ${COMPONENTS_DIR}/security_manager/include/security_manager/*.h)
-    string( REPLACE / \\ group ${inc} )
-    source_group("Header Files" FILES ${inc} )
-    add_library("SecurityManager" ${inc} ${SOURCES})
-    target_link_libraries(SecurityManager libeay32 ssleay32  ProtocolHandler jsoncpp ProtocolLibrary wcecompat wcecompatex)
-endif()
+
+file (GLOB inc ${COMPONENTS_DIR}/security_manager/include/security_manager/*.h)
+string( REPLACE / \\ group ${inc} )
+source_group("Header Files" FILES ${inc} )
+add_library("SecurityManager" ${inc} ${SOURCES})
+target_link_libraries(SecurityManager libeay32 ssleay32  ProtocolHandler jsoncpp ProtocolLibrary wcecompat wcecompatex)
 
 if(BUILD_TESTS)
   add_subdirectory(test)

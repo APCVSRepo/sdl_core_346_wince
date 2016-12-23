@@ -141,19 +141,6 @@ if (SECURITY_OPTION)
   endif()
 endif()
 
-set(objcopy "objcopy")
-if (OS_TYPE_OPTION)
-  if (${OS_TYPE_OPTION} STREQUAL "QNX")
-    message(STATUS "Jenkins integration: set build process for QNX")
-    #do not use include after project() command.
-    #Such usecase results in infinite cycle of reinitialization of compiler and other variables
-    INCLUDE("./qnx_6.5.0_linux_x86.cmake")
-    set(objcopy "nto${ARCH_TYPE_OPTION}-objcopy")
-    #tests are not supported yet for QNX build
-    set (BUILD_TESTS OFF)
-  endif()
-endif()
-
 #Jenkins integration section end
 
 add_custom_target(pasa-tarball
@@ -176,7 +163,8 @@ add_custom_target(genivi-tarball
 
 project (${PROJECT})
 
-#ADD_DEPENDENCIES(${PROJECT} Policy)
+# Only WinCE platform be supported.
+set(CMAKE_SYSTEM_NAME "WindowsCE")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
@@ -185,32 +173,30 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR})
 set(ARCHIVE_OUTPUT_DIRECTORY ./bin)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  set (CMAKE_CXX_FLAGS "/wd\"4819\" /wd\"4244\" /wd\"4390\" /wd\"4996\"  /EHsc /bigobj /Z7 /GF")
-  set (CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") #It will be appended to CMAKE_CXX_FLAGS in release
-  set (CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS})  
-  set (CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:CONSOLE /ENTRY:")  
+set (CMAKE_CXX_FLAGS "/wd\"4819\" /wd\"4244\" /wd\"4390\" /wd\"4996\"  /EHsc /bigobj /Z7 /GF")
+set (CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG") #It will be appended to CMAKE_CXX_FLAGS in release
+set (CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS})  
+set (CMAKE_EXE_LINKER_FLAGS "/SUBSYSTEM:CONSOLE /ENTRY:")
 
-  add_definitions(-D_WIN32_WCE=$(CEVER))
-  add_definitions(-D_CONSOLE)
-  add_definitions(-DUNDER_CE)
-  add_definitions(-D$(ARCHFAM))
-  add_definitions(-D$(_ARCHFAM_))
-  add_definitions(-DOS_WINCE)
-  add_definitions(-DWIN32_LEAN_AND_MEAN)
-  add_definitions(-DHAVE_PTW32_CONFIG_H)
-  add_definitions(-D_UNICODE)
-  add_definitions(-DUNICODE)
-  add_definitions(-DWINCE)
-  add_definitions(-D_WIN32)
-  add_definitions(-DLOG4CXX_STATIC)
-  add_definitions(-DAPR_DECLARE_STATIC)
-  set (BUILD_BT_SUPPORT OFF)
-  set (BUILD_USB_SUPPORT ON)
-  set (BUILD_AVAHI_SUPPORT OFF)
-  set (BUILD_BACKTRACE_SUPPORT OFF)
-  set (EXTENDED_MEDIA_MODE OFF)
-endif()
+add_definitions(-D_WIN32_WCE=$(CEVER))
+add_definitions(-D_CONSOLE)
+add_definitions(-DUNDER_CE)
+add_definitions(-D$(ARCHFAM))
+add_definitions(-D$(_ARCHFAM_))
+add_definitions(-DOS_WINCE)
+add_definitions(-DWIN32_LEAN_AND_MEAN)
+add_definitions(-DHAVE_PTW32_CONFIG_H)
+add_definitions(-D_UNICODE)
+add_definitions(-DUNICODE)
+add_definitions(-DWINCE)
+add_definitions(-D_WIN32)
+add_definitions(-DLOG4CXX_STATIC)
+add_definitions(-DAPR_DECLARE_STATIC)
+set (BUILD_BT_SUPPORT OFF)
+set (BUILD_USB_SUPPORT ON)
+set (BUILD_AVAHI_SUPPORT OFF)
+set (BUILD_BACKTRACE_SUPPORT OFF)
+set (EXTENDED_MEDIA_MODE OFF)
 
 if(BUILD_TARGET_LIBRARY)
 add_definitions(-DBUILD_TARGET_LIB)
@@ -240,21 +226,18 @@ if (TELEMETRY_MONITOR)
   add_definitions(-DTELEMETRY_MONITOR)
 endif()
 
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 #option(CMAKE_BUILD_TYPE "build type" "Debug")
 #set(CMAKE_BUILD_TYPE "Release")
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG" )
-    add_definitions(-DDEBUG)
-  elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRELEASE" )
-    add_definitions(-DRELEASE)
-  else()
-    set (CMAKE_BUILD_TYPE "Debug")
-    set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG" )
-    add_definitions(-DDEBUG)
-  endif()
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG" )
+add_definitions(-DDEBUG)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRELEASE" )
+add_definitions(-DRELEASE)
+else()
+set (CMAKE_BUILD_TYPE "Debug")
+set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG" )
+add_definitions(-DDEBUG)
 endif()
 
 # --- Interface generator
@@ -298,38 +281,25 @@ macro (GenerateInterface arg_xml_name arg_namespace parser_type)
     add_library("${file_name}" ${cpp_file})
 endmacro(GenerateInterface)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  # --- Useful macro
-  macro(create_test NAME SOURCES LIBS)
-    add_executable("${NAME}" ${CMAKE_SOURCE_DIR}/src/components/test_main.cc ${SOURCES})
-    target_link_libraries("${NAME}" ${LIBS})
-    target_link_libraries("${NAME}" Utils)
-    if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
-      add_test(${NAME} ${CMAKE_SOURCE_DIR}/qnx/remote_run_test.sh ${NAME})
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-      add_test(NAME ${NAME}
-      COMMAND ${NAME} --gtest_output=xml:${CMAKE_BINARY_DIR}/test_results/)
-    else()
-      add_test(${NAME} ${NAME})
-    endif()
-  endmacro(create_test)
-endif()
+# --- Useful macro
+macro(create_test NAME SOURCES LIBS)
+add_executable("${NAME}" ${CMAKE_SOURCE_DIR}/src/components/test_main.cc ${SOURCES})
+target_link_libraries("${NAME}" ${LIBS})
+target_link_libraries("${NAME}" Utils)
+add_test(${NAME} ${NAME})
+endmacro(create_test)
 
 
 # Include direction and link library
-
 include_directories (
-${CMAKE_SOURCE_DIR}/include/all
+  ${CMAKE_SOURCE_DIR}/include/all
+  ${CMAKE_SOURCE_DIR}/include/wince
+  ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apache-log4cxx-0.10.0/src/main/include
 )
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  include_directories (
-    ${CMAKE_SOURCE_DIR}/include/wince
-    ${CMAKE_SOURCE_DIR}/src/3rd_party/apache-log4cxx-win32-0.10.0/apache-log4cxx-0.10.0/src/main/include
-  )
-  LINK_DIRECTORIES(
-    ${CMAKE_SOURCE_DIR}/lib/wince
-  )
-endif()
+
+link_directories(
+  ${CMAKE_SOURCE_DIR}/lib/wince
+)
 
 # --replace in list macro
 macro(LIST_REPLACE LIST INDEX NEWVALUE)
@@ -342,10 +312,8 @@ endmacro(LIST_REPLACE)
 # Building application
 
 # --- Type HMI
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    set (WEB_HMI ON)
-    add_definitions(-DWEB_HMI)
-endif()
+set (WEB_HMI ON)
+add_definitions(-DWEB_HMI)
 
 if (HMI STREQUAL "qt" AND NOT DEFINED HMIADAPTER)
     set(HMIADAPTER "dbus")
@@ -433,9 +401,7 @@ if(ENABLE_HMI_PTU_DECRYPTION)
 endif()
 
 #set (RTLIB rt)
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (RTLIT )
-endif()
 
 # Building tests
 if(BUILD_TESTS)

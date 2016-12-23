@@ -41,18 +41,8 @@ include_directories (
   ${JSONCPP_INCLUDE_DIRECTORY}
   ${LIBUSB_INCLUDE_DIRECTORY}
   ${LOG4CXX_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    )
-endif()
-
-if (BUILD_BT_SUPPORT)
-  include_directories(
-  )
-endif()
 
 set (SOURCES
   ${TM_SRC_DIR}/transport_manager_impl.cc
@@ -82,14 +72,10 @@ if (BUILD_USB_SUPPORT)
     ${TM_SRC_DIR}/usb/usb_aoa_adapter.cc
     ${TM_SRC_DIR}/usb/usb_connection_factory.cc
     ${TM_SRC_DIR}/usb/usb_device_scanner.cc
-  )
-  if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    list (APPEND SOURCES
     ${TM_SRC_DIR}/usb/libusb/usb_handler.cc
     ${TM_SRC_DIR}/usb/libusb/usb_connection.cc
     ${TM_SRC_DIR}/usb/libusb/platform_usb_device.cc
-    )
-  endif()
+  )
 endif(BUILD_USB_SUPPORT)
 
 add_library(${target} ${SOURCES})
@@ -98,9 +84,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 endif()
 
 if (BUILD_USB_SUPPORT)
-  if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    target_link_libraries(${target} Libusb-1.0.16)
-  endif()
+  target_link_libraries(${target} Libusb-1.0.16)
 endif(BUILD_USB_SUPPORT)
 
 if(ENABLE_LOG)
@@ -109,9 +93,6 @@ endif()
 
 if (BUILD_BT_SUPPORT)
   target_link_libraries(${target} bluetooth)
-endif()
-
-if (CMAKE_SYSTEM_NAME STREQUAL "QNX")
 endif()
 
 if(BUILD_TESTS)

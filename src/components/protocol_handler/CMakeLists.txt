@@ -38,20 +38,15 @@ include_directories(
   ${COMPONENTS_DIR}/config_profile/include/
   ${CMAKE_SOURCE_DIR}/src/3rd_party-static/jsoncpp/include
   ${LOG4CXX_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    )
-endif()
-
 set(SOURCES
-    ${COMPONENTS_DIR}/protocol_handler/src/incoming_data_handler.cc
-    ${COMPONENTS_DIR}/protocol_handler/src/protocol_handler_impl.cc
-    ${COMPONENTS_DIR}/protocol_handler/src/protocol_packet.cc
-    ${COMPONENTS_DIR}/protocol_handler/src/protocol_payload.cc
-    ${COMPONENTS_DIR}/protocol_handler/src/multiframe_builder.cc
+  ${COMPONENTS_DIR}/protocol_handler/src/incoming_data_handler.cc
+  ${COMPONENTS_DIR}/protocol_handler/src/protocol_handler_impl.cc
+  ${COMPONENTS_DIR}/protocol_handler/src/protocol_packet.cc
+  ${COMPONENTS_DIR}/protocol_handler/src/protocol_payload.cc
+  ${COMPONENTS_DIR}/protocol_handler/src/multiframe_builder.cc
 )
 
 set(LIBRARIES

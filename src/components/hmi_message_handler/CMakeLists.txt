@@ -30,53 +30,46 @@
 
 
 include_directories (
-    include/
-    ${COMPONENTS_DIR}/application_manager/include/
-    ${COMPONENTS_DIR}/utils/include/
-    ${COMPONENTS_DIR}/smart_objects/include/
-    ${COMPONENTS_DIR}/formatters/include/
-    ${COMPONENTS_DIR}/media_manager/include/
-    ${COMPONENTS_DIR}/protocol_handler/include
-    ${JSONCPP_INCLUDE_DIRECTORY}
-    ${MESSAGE_BROKER_INCLUDE_DIRECTORY}
-    ${COMPONENTS_DIR}
-    ${CMAKE_BINARY_DIR}/src/components/
-    ${COMPONENTS_DIR}/dbus/include/
-    ${CMAKE_SOURCE_DIR}/
-    ${LOG4CXX_INCLUDE_DIRECTORY}
+  include/
+  ${COMPONENTS_DIR}/application_manager/include/
+  ${COMPONENTS_DIR}/utils/include/
+  ${COMPONENTS_DIR}/smart_objects/include/
+  ${COMPONENTS_DIR}/formatters/include/
+  ${COMPONENTS_DIR}/media_manager/include/
+  ${COMPONENTS_DIR}/protocol_handler/include
+  ${JSONCPP_INCLUDE_DIRECTORY}
+  ${MESSAGE_BROKER_INCLUDE_DIRECTORY}
+  ${COMPONENTS_DIR}
+  ${CMAKE_BINARY_DIR}/src/components/
+  ${COMPONENTS_DIR}/dbus/include/
+  ${CMAKE_SOURCE_DIR}/
+  ${LOG4CXX_INCLUDE_DIRECTORY}
+  ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/src/3rd_party-static/pthread-win32-2.9.1
-    )
-endif()
 
 if(HMIADAPTER STREQUAL "dbus")
-    set (DBUS_SOURCE ./src/dbus_message_adapter.cc)
-    set (DBUS_ADAPTER DBus)
+  set (DBUS_SOURCE ./src/dbus_message_adapter.cc)
+  set (DBUS_ADAPTER DBus)
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
 set (SOURCES
-    ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_handler_impl.cc
-    ${COMPONENTS_DIR}/hmi_message_handler/src/messagebroker_adapter.cc
-    ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_adapter_impl.cc
-    ${DBUS_SOURCE}
+  ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_handler_impl.cc
+  ${COMPONENTS_DIR}/hmi_message_handler/src/messagebroker_adapter.cc
+  ${COMPONENTS_DIR}/hmi_message_handler/src/hmi_message_adapter_impl.cc
+  ${DBUS_SOURCE}
 )
-endif()
 
 set(LIBRARIES
-    Utils
-    ${DBUS_ADAPTER}
-    ${RTLIB}
+  Utils
+  ${DBUS_ADAPTER}
+  ${RTLIB}
 )
 
 add_library("HMIMessageHandler" ${SOURCES})
 target_link_libraries("HMIMessageHandler" ${LIBRARIES})
 
 if(ENABLE_LOG)
-    target_link_libraries("HMIMessageHandler" log4cxx -L${LOG4CXX_LIBS_DIRECTORY})
+  target_link_libraries("HMIMessageHandler" log4cxx -L${LOG4CXX_LIBS_DIRECTORY})
 endif()
 
 # Tests temporary are inactivated. For details please check
