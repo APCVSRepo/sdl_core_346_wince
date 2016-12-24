@@ -160,7 +160,7 @@ else()
 SET_TARGET_PROPERTIES(${PROJECT} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/log4cxx.properties DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/audio.8bit.wav DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/smartDeviceLink.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/hmi_capabilities.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -173,7 +173,16 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 if(ENABLE_LOG)
-install(FILES ${CMAKE_BINARY_DIR}/src/plugins/appenders/${CMAKE_BUILD_TYPE}/appenders.dll DESTINATION bin)
+  file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/log4cxx.properties DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  install(FILES ${CMAKE_BINARY_DIR}/src/plugins/appenders/${CMAKE_BUILD_TYPE}/appenders.dll DESTINATION bin)
+endif()
+
+if(ENABLE_SECURITY)
+  install(
+  FILES
+    ${CMAKE_SOURCE_DIR}/mycert.pem ${CMAKE_SOURCE_DIR}/mykey.pem
+  DESTINATION bin
+)
 endif()
 
 if(BUILD_TESTS)
@@ -221,14 +230,14 @@ endif ()
 # Install rules
 if(BUILD_TARGET_LIBRARY)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/smartDeviceLinkCore.dll" DESTINATION bin)
-  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/Release/smartDeviceLinkCore.lib" DESTINATION bin)
 else()
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/smartDeviceLinkCore.exe" DESTINATION bin)
 endif()
 
+install(FILES ${CMAKE_BINARY_DIR}/src/components/policy/src/policy/${CMAKE_BUILD_TYPE}/Policy.dll DESTINATION bin)
+
 install(
   FILES log4cxx.properties audio.8bit.wav smartDeviceLink.ini
-    hmi_capabilities.json sdl_preloaded_pt.json
-    ${CMAKE_SOURCE_DIR}/mycert.pem ${CMAKE_SOURCE_DIR}/mykey.pem
+    hmi_capabilities.json
   DESTINATION bin
 )
