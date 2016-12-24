@@ -3,12 +3,9 @@ set(ENCRYPTION_INCLUDE_DIRECTORY ${ENCRYPTION_INCLUDE_DIRECTORY} PARENT_SCOPE)
 
 include_directories (
   ./include
+  ${CMAKE_SOURCE_DIR}/include/wince/
+  ${CMAKE_SOURCE_DIR}/lib/wince/
 )
-
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  include_directories(${CMAKE_SOURCE_DIR}/include/wince/)
-  include_directories(${CMAKE_SOURCE_DIR}/lib/wince/)
-endif()
 
 set (SOURCES
   ./src/Base64.cpp

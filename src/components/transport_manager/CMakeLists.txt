@@ -79,9 +79,7 @@ if (BUILD_USB_SUPPORT)
 endif(BUILD_USB_SUPPORT)
 
 add_library(${target} ${SOURCES})
-if(CMAKE_SYSTEM_NAME STREQUAL "WindowsCE")
-  target_link_libraries(${target} ProtocolLibrary pthreadVC2)
-endif()
+target_link_libraries(${target} ProtocolLibrary pthreadVC2)
 
 if (BUILD_USB_SUPPORT)
   target_link_libraries(${target} Libusb-1.0.16)
