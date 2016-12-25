@@ -234,10 +234,11 @@ else()
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/smartDeviceLinkCore.exe" DESTINATION bin)
 endif()
 
-install(FILES ${CMAKE_BINARY_DIR}/src/components/policy/src/policy/${CMAKE_BUILD_TYPE}/Policy.dll DESTINATION bin)
-
 install(
-  FILES log4cxx.properties audio.8bit.wav smartDeviceLink.ini
-    hmi_capabilities.json
+  FILES
+  ${CMAKE_BINARY_DIR}/src/components/policy/src/policy/${CMAKE_BUILD_TYPE}/Policy.dll
+  audio.8bit.wav
+  smartDeviceLink.ini
+  hmi_capabilities.json
   DESTINATION bin
 )
