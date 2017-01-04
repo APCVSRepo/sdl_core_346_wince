@@ -240,5 +240,6 @@ install(
   audio.8bit.wav
   smartDeviceLink.ini
   hmi_capabilities.json
+  sdl_preloaded_pt.json
   DESTINATION bin
 )
